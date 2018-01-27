@@ -1,0 +1,16 @@
+spring:
+    datasource:
+        driver-class-name: org.postgresql.Driver
+        url: # Please provide an (optionally AWD RDS) postgre db address, user and pw
+        username: 
+        password: 
+
+    jpa:
+        database: POSTGRESQL
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
+        hibernate:
+            ddl-auto: none
+            naming.implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
+        show-sql: true
+        properties:
+            hibernate.format_sql: true

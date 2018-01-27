@@ -1,0 +1,218 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20180127-usermanagement-tables
+      author: aliayhan
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: enabled
+                  type: boolean
+                  constraints:
+                    nullable: false
+                  defaultValueBoolean: true
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: role
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_roles_users_id
+                    references: users(id)
+        - createIndex:
+            indexName: idx_roles_user_name
+            tableName: roles
+            columns:
+            - column:
+                name: user_name
+
+  - changeSet:
+      id:  20180127-insert-users
+      author: aliayhan
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: user_name
+                  value: user1
+              - column:
+                  name: password
+                  value: user1
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: user_name
+                  value: user2
+              - column:
+                  name: password
+                  value: user2
+                  
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: user_name
+                  value: admin
+              - column:
+                  name: password
+                  value: admin
+
+  - changeSet:
+      id: 20180127-insert-roles
+      author: aliayhan
+      changes:
+        - sql:
+            sql: INSERT INTO roles (role, user_name, user_id) VALUES ('ROLE_USER', 'user1', (SELECT id FROM users WHERE user_name = 'user1'))
+        - sql:
+            sql: INSERT INTO roles (role, user_name, user_id) VALUES ('ROLE_USER', 'user2', (SELECT id FROM users WHERE user_name = 'user2'))
+        - sql:
+            sql: INSERT INTO roles (role, user_name, user_id) VALUES ('ROLE_USER', 'admin', (SELECT id FROM users WHERE user_name = 'admin'))
+        - sql:
+            sql: INSERT INTO roles (role, user_name, user_id) VALUES ('ROLE_ADMIN', 'admin', (SELECT id FROM users WHERE user_name = 'admin'))
+            
+  - changeSet:
+      id: 20180128-product-category-tables
+      author: aliayhan
+      changes:
+        - createTable:
+            tableName: categories
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: parent_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_categories_self_id
+                    references: categories(id)
+        - createTable:
+            tableName: products
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: details
+                  type: varchar(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: float
+                  constraints:
+                    nullable: false
+              - column:
+                  name: image_url
+                  type: varchar(100)                    
+              - column:
+                  name: category_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_products_categories_id
+                    references: categories(id)
+                    
+  - changeSet:
+      id:  20180128-insert-categories
+      author: aliayhan
+      changes:
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: title
+                  value: Main1
+        - insert:
+            tableName: categories
+            columns:
+              - column:
+                  name: title
+                  value: Main2
+        - sql:
+            sql: INSERT INTO categories (title, parent_id) VALUES ('Main1Sub1', (SELECT id FROM categories WHERE title = 'Main1'))
+        - sql:
+            sql: INSERT INTO categories (title, parent_id) VALUES ('Main1Sub2', (SELECT id FROM categories WHERE title = 'Main1'))
+        - sql:
+            sql: INSERT INTO categories (title, parent_id) VALUES ('Main2Sub1', (SELECT id FROM categories WHERE title = 'Main2'))
+        - sql:
+            sql: INSERT INTO categories (title, parent_id) VALUES ('Main2Sub2', (SELECT id FROM categories WHERE title = 'Main2'))
+            
+  - changeSet:
+      id:  20180128-insert-products
+      author: aliayhan
+      changes:
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id) VALUES ('Main1Sub1-P Cherry', 'Cherry not berry', 3.99, (SELECT id FROM categories WHERE title = 'Main1Sub1'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id) VALUES ('Main1Sub1-P Berry', 'Berry not cherry', 5.99, (SELECT id FROM categories WHERE title = 'Main1Sub1'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id) VALUES ('Main1Sub2-P Keyboard', 'Cherry keyboard not berry', 99.90, (SELECT id FROM categories WHERE title = 'Main1Sub2'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id) VALUES ('Main1Sub2-P Mouse', 'Click and click makes two', 59.80, (SELECT id FROM categories WHERE title = 'Main1Sub2'))         
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id) VALUES ('Main2Sub1-P Television', 'Vision is future', 1580.90, (SELECT id FROM categories WHERE title = 'Main2Sub1'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id) VALUES ('Main2Sub1-P Playstation', 'Good old games', 1290.00, (SELECT id FROM categories WHERE title = 'Main2Sub1'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id) VALUES ('Main2Sub2-P Steam machine', 'Real steam machine not game platform', 49500.00, (SELECT id FROM categories WHERE title = 'Main2Sub2'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id) VALUES ('Main2Sub2-P Terminator', 'I ll be back', 6666666.66, (SELECT id FROM categories WHERE title = 'Main2Sub2'))
