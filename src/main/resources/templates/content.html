@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+ <head>
+ 	<title>buyProducts</title>
+	<style>
+		#products {
+		    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+		    border-collapse: collapse;
+		    width: 100%;
+		}
+		
+		#products td, #products th {
+		    border: 1px solid #ddd;
+		    padding: 8px;
+		}
+		
+		#products tr:nth-child(even){background-color: #f2f2f2;}
+		
+		#products tr:hover {background-color: #ddd;}
+		
+		#products th {
+		    padding-top: 12px;
+		    padding-bottom: 12px;
+		    text-align: left;
+		    background-color: #4CAF50;
+		    color: white;
+		}
+	</style> 	
+ </head>
+ <body>
+     <h3 style="color:blue">buyProducts</h3>
+     
+     <h3>Categories</h3>
+     <div th:with="categories = ${productContentForm.categories}">
+	     <div th:fragment="submenu">
+	        <ul>
+	            <li th:each="category : ${categories}">
+	            	<div th:if="${not #lists.isEmpty(category.subCategories)}" th:text="${category.title}"></div>
+	            	<a th:if="${#lists.isEmpty(category.subCategories)}" th:text="${category.title}" th:href="@{/contentAndProducts(category=${category.id},page=0)}"></a>
+	                <div th:with="categories = ${category.subCategories}" th:include="content :: submenu"></div>
+	            </li>
+	        </ul>
+	    </div>
+    </div>
+    
+    <h3>Products</h3>
+	<div th:unless="${#lists.isEmpty(productContentForm.products)}">
+		<table id="products">
+			<tr th:each="prod,itrStat : ${productContentForm.products}">
+			    <td th:text="${prod.title}"></td>      
+			    <td th:text="${prod.details}"></td>
+			</tr>
+		</table>		
+	</div>
+	<div th:with="currentCategory = ${@productContentServiceImpl.toInt(#httpServletRequest.getParameter('category'))}">
+		<div th:if="${currentCategory != null}" th:with="currentPage = ${@productContentServiceImpl.toInt(#httpServletRequest.getParameter('page'))}">
+			<a th:unless="${currentPage &gt; 0}">&lt;&lt;</a>
+			<a th:if="${currentPage &gt; 0}" th:href="@{/contentAndProducts(category=${currentCategory},page=${currentPage - 1})}">&lt;&lt; </a>
+			<span th:text="${currentPage}"></span>
+			<a th:href="@{/contentAndProducts(category=${currentCategory},page=${currentPage + 1})}"> &gt;&gt;</a>
+		</div>
+	</div>
+     
+    <br/>
+	<form th:action="@{/logout}" method="post">
+	    <input type="submit" value="Sign Out"/>
+	</form>
+ </body>
+</html>

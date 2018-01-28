@@ -135,6 +135,12 @@ databaseChangeLog:
                   constraints:
                     foreignKeyName: fk_categories_self_id
                     references: categories(id)
+        - createIndex:
+            indexName: idx_categories_parent_id
+            tableName: categories
+            columns:
+            - column:
+                name: parent_id
         - createTable:
             tableName: products
             columns:
@@ -170,6 +176,13 @@ databaseChangeLog:
                     nullable: false
                     foreignKeyName: fk_products_categories_id
                     references: categories(id)
+              - column:
+                  name: user_id
+                  type: int
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_products_users_id
+                    references: users(id)
                     
   - changeSet:
       id:  20180128-insert-categories
@@ -201,18 +214,56 @@ databaseChangeLog:
       author: aliayhan
       changes:
         - sql:
-            sql: INSERT INTO products (title, details, price, category_id) VALUES ('Main1Sub1-P Cherry', 'Cherry not berry', 3.99, (SELECT id FROM categories WHERE title = 'Main1Sub1'))
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main1Sub1P1 Cherry', 'Cherry not berry', 3.99, (SELECT id FROM categories WHERE title = 'Main1Sub1'), (SELECT id FROM users WHERE user_name = 'user1'))
         - sql:
-            sql: INSERT INTO products (title, details, price, category_id) VALUES ('Main1Sub1-P Berry', 'Berry not cherry', 5.99, (SELECT id FROM categories WHERE title = 'Main1Sub1'))
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main1Sub1P2 Berry', 'Berry not cherry', 5.99, (SELECT id FROM categories WHERE title = 'Main1Sub1'), (SELECT id FROM users WHERE user_name = 'user1'))
         - sql:
-            sql: INSERT INTO products (title, details, price, category_id) VALUES ('Main1Sub2-P Keyboard', 'Cherry keyboard not berry', 99.90, (SELECT id FROM categories WHERE title = 'Main1Sub2'))
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main1Sub1P3', 'P3', 9.99, (SELECT id FROM categories WHERE title = 'Main1Sub1'), (SELECT id FROM users WHERE user_name = 'user1'))
         - sql:
-            sql: INSERT INTO products (title, details, price, category_id) VALUES ('Main1Sub2-P Mouse', 'Click and click makes two', 59.80, (SELECT id FROM categories WHERE title = 'Main1Sub2'))         
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main1Sub1P4', 'P4', 4.99, (SELECT id FROM categories WHERE title = 'Main1Sub1'), (SELECT id FROM users WHERE user_name = 'user2'))
         - sql:
-            sql: INSERT INTO products (title, details, price, category_id) VALUES ('Main2Sub1-P Television', 'Vision is future', 1580.90, (SELECT id FROM categories WHERE title = 'Main2Sub1'))
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main1Sub1P5', 'P5', 9.99, (SELECT id FROM categories WHERE title = 'Main1Sub1'), (SELECT id FROM users WHERE user_name = 'user2'))
         - sql:
-            sql: INSERT INTO products (title, details, price, category_id) VALUES ('Main2Sub1-P Playstation', 'Good old games', 1290.00, (SELECT id FROM categories WHERE title = 'Main2Sub1'))
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main1Sub1P6', 'P6', 4.99, (SELECT id FROM categories WHERE title = 'Main1Sub1'), (SELECT id FROM users WHERE user_name = 'admin'))
+            
         - sql:
-            sql: INSERT INTO products (title, details, price, category_id) VALUES ('Main2Sub2-P Steam machine', 'Real steam machine not game platform', 49500.00, (SELECT id FROM categories WHERE title = 'Main2Sub2'))
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main1Sub2P1 Keyboard', 'Cherry keyboard not berry', 99.90, (SELECT id FROM categories WHERE title = 'Main1Sub2'), (SELECT id FROM users WHERE user_name = 'user1'))
         - sql:
-            sql: INSERT INTO products (title, details, price, category_id) VALUES ('Main2Sub2-P Terminator', 'I ll be back', 6666666.66, (SELECT id FROM categories WHERE title = 'Main2Sub2'))
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main1Sub2P2 Mouse', 'Click and click makes two', 59.80, (SELECT id FROM categories WHERE title = 'Main1Sub2'), (SELECT id FROM users WHERE user_name = 'user1'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main1Sub2P3', 'P3', 9.99, (SELECT id FROM categories WHERE title = 'Main1Sub2'), (SELECT id FROM users WHERE user_name = 'user1'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main1Sub2P4', 'P4', 4.99, (SELECT id FROM categories WHERE title = 'Main1Sub2'), (SELECT id FROM users WHERE user_name = 'user2'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main1Sub2P5', 'P5', 9.99, (SELECT id FROM categories WHERE title = 'Main1Sub2'), (SELECT id FROM users WHERE user_name = 'user2'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main1Sub2P6', 'P6', 4.99, (SELECT id FROM categories WHERE title = 'Main1Sub2'), (SELECT id FROM users WHERE user_name = 'admin'))
+                     
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main2Sub1P1 Television', 'Vision is future', 1580.90, (SELECT id FROM categories WHERE title = 'Main2Sub1'), (SELECT id FROM users WHERE user_name = 'user1'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main2Sub1P2 Playstation', 'Good old games', 1290.00, (SELECT id FROM categories WHERE title = 'Main2Sub1'), (SELECT id FROM users WHERE user_name = 'user1'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main2Sub1P3', 'P3', 9.99, (SELECT id FROM categories WHERE title = 'Main2Sub1'), (SELECT id FROM users WHERE user_name = 'user1'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main2Sub1P4', 'P4', 4.99, (SELECT id FROM categories WHERE title = 'Main2Sub1'), (SELECT id FROM users WHERE user_name = 'user2'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main2Sub1P5', 'P5', 9.99, (SELECT id FROM categories WHERE title = 'Main2Sub1'), (SELECT id FROM users WHERE user_name = 'user2'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main2Sub1P6', 'P6', 4.99, (SELECT id FROM categories WHERE title = 'Main2Sub1'), (SELECT id FROM users WHERE user_name = 'admin'))
+        
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main2Sub2P1 Steam machine', 'Real steam machine not game platform', 49500.00, (SELECT id FROM categories WHERE title = 'Main2Sub2'), (SELECT id FROM users WHERE user_name = 'user1'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main2Sub2P2 Terminator', 'I ll be back', 6666666.66, (SELECT id FROM categories WHERE title = 'Main2Sub2'), (SELECT id FROM users WHERE user_name = 'user1'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main2Sub2P3', 'P3', 9.99, (SELECT id FROM categories WHERE title = 'Main2Sub2'), (SELECT id FROM users WHERE user_name = 'user1'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main2Sub2P4', 'P4', 4.99, (SELECT id FROM categories WHERE title = 'Main2Sub2'), (SELECT id FROM users WHERE user_name = 'user2'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main2Sub2P5', 'P5', 9.99, (SELECT id FROM categories WHERE title = 'Main2Sub2'), (SELECT id FROM users WHERE user_name = 'user2'))
+        - sql:
+            sql: INSERT INTO products (title, details, price, category_id, user_id) VALUES ('Main2Sub2P6', 'P6', 4.99, (SELECT id FROM categories WHERE title = 'Main2Sub2'), (SELECT id FROM users WHERE user_name = 'admin'))    
+            
+            
+            
